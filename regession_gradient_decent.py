@@ -24,10 +24,13 @@ def calculateSquaredResidual(x_vector, y_value, w_vector):
 def calculateResidual(x_vector, y_value, w_vector):
     return y_value - calculateWeightedAttributeSum(x_vector, w_vector) # equal to y - (w_0 + w_1 * x_1 + ... + w_n * x*n)
 
-def calculateWeightedAttributeSum(x_vector, w_vector): # equal to (w_0 + w_1 * x_1 + ... + w_n * x*n)
+def calculateWeightedAttributeSum(x_vector, w_vector): # equal to (w_0 + w_1 * x_1 + ... + w_n * x_n)
     w_0 = w_vector[0]
     w_for_zip = w_vector[1:]
     return w_0 + w_for_zip.dot(x_vector)
+
+def predicitWithWeights(X, w_vector):
+    return [calculateWeightedAttributeSum(x_vector, w_vector) for x_vector in X]
 
 
 if __name__ == "__main__":
@@ -37,7 +40,7 @@ if __name__ == "__main__":
     dimensions = X_values.shape[1]
     weights = np.full(dimensions+1, 1.0)
 
-    #print(raw_data)
+    print(raw_data)
     #print(weights)
     #print(calculateWeightedAttributeSum(X_values[0], weights))
     #print(calculateResidual(X_values[0], Y_values[0], weights))
@@ -51,4 +54,7 @@ if __name__ == "__main__":
     print(calculateDerivateResidualSumOfSquares(X_values, Y_values, weights, 3))
     print("Gradient Descent: ")
     print(gradientDescent(X_values, Y_values, weights, alpha=2.0, n_iter=110))
+    weights = gradientDescent(X_values, Y_values, weights, alpha=2.0, n_iter=110)
+    print(predicitWithWeights([[3,2,1]], weights))
+
     
