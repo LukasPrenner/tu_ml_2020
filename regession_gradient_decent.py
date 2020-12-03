@@ -4,7 +4,8 @@ def calculateDerivateResidualSumOfSquares(X, Y, w_vector, of_w): #works for w_1.
     return sum([calculateDerivateSquaredResidualTerm(x_vector, y_value, w_vector, of_w) for x_vector, y_value in zip(X,Y)])
 
 def calculateDerivateSquaredResidualTerm(x_vector, y_value, w_vector, of_w):
-    outer_derivate = -2 * x_vector[of_w-1]
+    x_value_of_w = 1 if of_w == 0 else x_vector[of_w-1]
+    outer_derivate = -2 * x_value_of_w
     return outer_derivate * calculateResidual(x_vector, y_value, w_vector)
 
 def calculateResidualSumOfSquares(X, Y, w_vector):
@@ -29,10 +30,16 @@ if __name__ == "__main__":
     dimensions = X_values.shape[1]
     weights = np.full(dimensions+1, 1.0)
 
-    print(weights)
-    print(calculateWeightedAttributeSum(X_values[0], weights))
-    print(calculateResidual(X_values[0], Y_values[0], weights))
-    print(calculateSquaredResidual(X_values[0], Y_values[0], weights))
+    #print(raw_data)
+    #print(weights)
+    #print(calculateWeightedAttributeSum(X_values[0], weights))
+    #print(calculateResidual(X_values[0], Y_values[0], weights))
+    #print(calculateSquaredResidual(X_values[0], Y_values[0], weights))
+    print("RSS:")
     print(calculateResidualSumOfSquares(X_values, Y_values, weights))
+    print("Derivatives: ")
+    print(calculateDerivateResidualSumOfSquares(X_values, Y_values, weights, 0))
+    print(calculateDerivateResidualSumOfSquares(X_values, Y_values, weights, 1))
     print(calculateDerivateResidualSumOfSquares(X_values, Y_values, weights, 2))
+    print(calculateDerivateResidualSumOfSquares(X_values, Y_values, weights, 3))
     
