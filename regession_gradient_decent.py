@@ -1,11 +1,21 @@
 import numpy as np
 
-def gradientDescent(X, Y, w_vector, alpha, n_iter=100):
+def gradientDescent(X, Y, w_vector, alpha=0.001, max_iter=10000, n_iter_no_change=10):
     w_count = w_vector.shape[0]
     update_w = lambda of_w, w_value: w_value -  alpha * calculateDerivateResidualSumOfSquares(X, Y, w_vector, of_w)
-    for iter in range(n_iter):
-        w_vector_tmp = np.array(list(map(update_w, range(0,w_count), w_vector)))
-        w_vector = w_vector_tmp
+
+    n_iter_no_change_count = 0
+    for iter in range(max_iter):
+        w_prev = w_vector
+
+        w_vector = np.array(list(map(update_w, range(0,w_count), w_vector)))
+
+        n_iter_no_change_count = n_iter_no_change_count+1 if np.allclose(w_prev, w_vector, rtol=1e-30, atol=1e-35) else 0 #check if there is sequence of the same weights
+        if((n_iter_no_change_count+1) == n_iter_no_change):
+            print(f'Iteration stopped at iteration={iter} since there was no change in weight in the last {n_iter_no_change} iterations!')
+            return w_vector
+            
+    print(f'Iteration did not converege with alpha={alpha}, max_iter={max_iter}, n_iter_no_change={n_iter_no_change}')
     return w_vector
 
 def calculateDerivateResidualSumOfSquares(X, Y, w_vector, of_w): #works for w_1..w_n but not for w_0
@@ -33,7 +43,6 @@ def calculateWeightedAttributeSum(x_vector, w_vector): # equal to (w_0 + w_1 * x
 def predicitWithWeights(X, w_vector):
     return [calculateWeightedAttributeSum(x_vector, w_vector) for x_vector in X]
 
-
 if __name__ == "__main__":
     raw_data = np.genfromtxt('testinput.txt')
     X_values = np.delete(raw_data, raw_data.shape[1]-1, 1)
@@ -54,8 +63,9 @@ if __name__ == "__main__":
     print(calculateDerivateResidualSumOfSquares(X_values, Y_values, weights, 2))
     print(calculateDerivateResidualSumOfSquares(X_values, Y_values, weights, 3))
     print("Gradient Descent: ")
-    print(gradientDescent(X_values, Y_values, weights, alpha=0.0002, n_iter=20000))
-    weights = gradientDescent(X_values, Y_values, weights, alpha=0.0002, n_iter=20000)
+    print(gradientDescent(X_values, Y_values, weights))
+    weights = gradientDescent(X_values, Y_values, weights)
     print(predicitWithWeights([[3,2,1]], weights))
+    print(calculateResidualSumOfSquares(X_values, Y_values, weights))
 
     
