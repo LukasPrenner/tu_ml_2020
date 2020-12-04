@@ -13,8 +13,8 @@ class GradientDescentLinearRegression:
         self.n_iter_no_change = n_iter_no_change
         self.debug_output = debug_output
 
-    def fit(self, X, Y, coef_init=None):
-        self.initalizeWeights(X, coef_init)
+    def fit(self, X, Y, coef_init=None, intercept_init=1.0):
+        self.initalizeWeights(X, coef_init, intercept_init)
         w_count = self.w_vector.shape[0]
         update_w = lambda of_w, w_value: w_value -  self.alpha * GradientDescentLinearRegression.calculateDerivateResidualSumOfSquares(X, Y, self.w_vector, of_w)
 
@@ -31,18 +31,20 @@ class GradientDescentLinearRegression:
             if((n_iter_no_change_count+1) == self.n_iter_no_change):
                 if self.debug_output:
                     print(f'Iteration stopped at iteration={iter} since there was no change in weight in the last {self.n_iter_no_change} iterations!')
-                return
+                return self.w_vector[1:], self.w_vector[0]
         if self.debug_output:
             print(f'Iteration did not converege with alpha={self.alpha}, max_iter={self.max_iter}, n_iter_no_change={self.n_iter_no_change}')
+        return self.w_vector[1:], self.w_vector[0]
     
     def predict(self, X):
         return [GradientDescentLinearRegression.calculateWeightedAttributeSum(x_vector, self.w_vector) for x_vector in X]
     
-    def initalizeWeights(self, X, coef_init):
+    def initalizeWeights(self, X, coef_init, intercept_init):
         if coef_init.any() == None:
-            self.w_vector = np.full(X.shape[1]+1, 1.0)
+            self.w_vector = np.full(X.shape[1], 1.0)
         else:
-            self.w_vector = coef_init
+            self.w_vector = coef_init[0]
+        self.w_vector = np.insert(self.w_vector, 0, intercept_init, axis=0) #prepend the intercept w_0
 
     @staticmethod
     def calculateDerivateResidualSumOfSquares(X, Y, w_vector, of_w): #works for w_1..w_n but not for w_0
@@ -80,13 +82,18 @@ if __name__ == "__main__":
     X_values = np.delete(raw_data, raw_data.shape[1]-1, 1)
     Y_values = raw_data[:,raw_data.shape[1]-1]
 
-    weights = np.full(X_values.shape[1]+1, 1.0)
+    weights_sk = np.full((1,X_values.shape[1]), 1.0) #do not reuse the weights since sk-learn does inplace work with the coef_init matrix!
+    intercept_sk = 1
+    weights_own = np.full((1,X_values.shape[1]), 1.0)
+    intercept_own = 1
 
     sk_gdc = SGDRegressor()
-    sk_gdc.fit(X_values, Y_values, coef_init=[weights[1:]]) #coef_init is the same as our weights for comparison reasons
+    sk_gdc.fit(X_values, Y_values, coef_init=weights_sk, intercept_init=intercept_sk) #coef_init is the same as our weights for comparison reasons (sklear does not pass w_0!)
+    print("Weights and intercept found by sk:", weights_sk, intercept_sk)
 
-    own_gdc = GradientDescentLinearRegression(debug_output=True)
-    own_gdc.fit(X_values, Y_values, coef_init=weights)
+    own_gdc = GradientDescentLinearRegression(debug_output=False)
+    weights_own, intercept_own = own_gdc.fit(X_values, Y_values, coef_init=weights_own, intercept_init=intercept_own)
+    print("Weights and intercept found by own:",weights_own, intercept_own)
 
     print("Prediction with skLearn:", sk_gdc.predict([X_values[0]])[0])   
     print("Prediction with own-imp:", own_gdc.predict([X_values[0]])[0])
