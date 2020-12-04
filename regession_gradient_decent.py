@@ -4,7 +4,8 @@ def gradientDescent(X, Y, w_vector, alpha, n_iter=100):
     w_count = w_vector.shape[0]
     update_w = lambda of_w, w_value: w_value -  alpha * calculateDerivateResidualSumOfSquares(X, Y, w_vector, of_w)
     for iter in range(n_iter):
-        w_vector = np.array(list(map(update_w, range(0,w_count), w_vector)))
+        w_vector_tmp = np.array(list(map(update_w, range(0,w_count), w_vector)))
+        w_vector = w_vector_tmp
     return w_vector
 
 def calculateDerivateResidualSumOfSquares(X, Y, w_vector, of_w): #works for w_1..w_n but not for w_0
@@ -53,8 +54,8 @@ if __name__ == "__main__":
     print(calculateDerivateResidualSumOfSquares(X_values, Y_values, weights, 2))
     print(calculateDerivateResidualSumOfSquares(X_values, Y_values, weights, 3))
     print("Gradient Descent: ")
-    print(gradientDescent(X_values, Y_values, weights, alpha=2.0, n_iter=110))
-    weights = gradientDescent(X_values, Y_values, weights, alpha=2.0, n_iter=110)
+    print(gradientDescent(X_values, Y_values, weights, alpha=0.0002, n_iter=20000))
+    weights = gradientDescent(X_values, Y_values, weights, alpha=0.0002, n_iter=20000)
     print(predicitWithWeights([[3,2,1]], weights))
 
     
