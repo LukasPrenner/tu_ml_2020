@@ -54,38 +54,20 @@ if __name__ == "__main__":
     #raw_data = np.genfromtxt('datasets/metro.csv', delimiter=',')
     #raw_data = pd.read_csv('datasets/metro.csv')
     raw_data = pd.read_excel('datasets/real_estate.xlsx').to_numpy()
-    #raw_data = StandardScaler().fit_transform(raw_data)
+    raw_data = StandardScaler().fit_transform(raw_data)
     X_values = np.delete(raw_data, raw_data.shape[1]-1, 1)
     Y_values = raw_data[:,raw_data.shape[1]-1]
     dimensions = X_values.shape[1]
     weights = np.full(dimensions+1, 1.0)
 
-    print(StandardScaler().fit_transform(raw_data))
-    print(raw_data.shape)
-
+    weights = gradientDescent(X_values, Y_values, weights)
     print(weights)
-    #print(calculateWeightedAttributeSum(X_values[0], weights))
-    #print(calculateResidual(X_values[0], Y_values[0], weights))
-    #print(calculateSquaredResidual(X_values[0], Y_values[0], weights))
-    #print("RSS:")
-    #print(calculateResidualSumOfSquares(X_values, Y_values, weights))
-    #print("Derivatives: ")
-    #print(calculateDerivateResidualSumOfSquares(X_values, Y_values, weights, 0))
-    #print(calculateDerivateResidualSumOfSquares(X_values, Y_values, weights, 1))
-    #print(calculateDerivateResidualSumOfSquares(X_values, Y_values, weights, 2))
-    #print(calculateDerivateResidualSumOfSquares(X_values, Y_values, weights, 3))
-    #print("Gradient Descent: ")
-    #weights = gradientDescent(X_values, Y_values, weights, alpha=0.0001, max_iter=1000)
-    #print([3.44790020e-15,1.06713711e-01,-2.25812564e-01,-4.16251964e-01,2.45344636e-01,2.05646664e-01,-1.40191268e-02])
-    #print(X_values[0])
+
 
     gdc = SGDRegressor()
-    gdc.fit(X_values, Y_values)
-    print(gdc.predict([X_values[0]]))   
-    print(predicitWithWeights([X_values[0]], weights))
-    print(Y_values[0])
-
-    #print(predicitWithWeights([X_values[0]], weights))
-    #print(Y_values[0])
+    gdc.fit(X_values, Y_values, coef_init=[weights[1:]]) #coef_init is the same as our weights for comparison reasons
+    print("Prediction with skLearn:", gdc.predict([X_values[0]])[0])   
+    print("Prediction with own-imp:",predicitWithWeights([X_values[0]], weights)[0])
+    print("Actual y-value:         ",Y_values[0])
 
     
