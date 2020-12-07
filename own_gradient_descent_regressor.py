@@ -35,9 +35,10 @@ class OwnGradientDescentRegressor:
         return [OwnGradientDescentRegressor.calculateWeightedAttributeSum(x_vector, self.w_vector) for x_vector in X]
     
     def initalizeWeights(self, X, coef_init, intercept_init):
-        if coef_init.any() == None:
-            self.w_vector = np.full(X.shape[1], 1.0)
-        else:
+        try:
+            if coef_init == None:
+                self.w_vector = np.full(X.shape[1], 1.0)
+        except:
             self.w_vector = coef_init[0]
         self.w_vector = np.insert(self.w_vector, 0, intercept_init, axis=0) #prepend the intercept w_0
 
