@@ -16,15 +16,19 @@ class OwnKNeighborsRegressor:
     def findknearestNeighbors(self, X, Y, X_test):
         y_hat = []
         XY = pd.concat([X, Y],axis=1)
+        #print(X)
+        #print(Y)
+        #print(XY)
 
 
         for point_test in X_test.iterrows():
             distances = []
 
             for point_train in XY.iterrows():
-
+                #print(point_train)
                 distance = self.calculateDistance(point_test[1], point_train[1][:-1], self.p)
                 distances.append([distance, point_train[1][-1]])
+                #print(distances)
 
 
             distances_df = pd.DataFrame(data=distances)
