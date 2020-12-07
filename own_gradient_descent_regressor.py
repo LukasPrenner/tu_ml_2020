@@ -25,7 +25,7 @@ class OwnGradientDescentRegressor:
 
             w_prev = self.w_vector
 
-            self.w_vector = np.array(list(map(update_w, range(0,w_count), self.w_vector)))
+            self.w_vector = np.array(list(map(update_w, range(0,w_count), self.w_vector))).flatten()
 
             n_iter_no_change_count = n_iter_no_change_count+1 if np.allclose(w_prev, self.w_vector, rtol=1e-30, atol=1e-35) else 0 #check if there is sequence of the same weights
             if((n_iter_no_change_count+1) == self.n_iter_no_change):
@@ -37,6 +37,8 @@ class OwnGradientDescentRegressor:
         return self.w_vector[1:], self.w_vector[0]
     
     def predict(self, X):
+        if(isinstance(X, pd.DataFrame)):
+            X = X.to_numpy()
         return [OwnGradientDescentRegressor.calculateWeightedAttributeSum(x_vector, self.w_vector) for x_vector in X]
     
     def initalizeWeights(self, X, coef_init, intercept_init):
