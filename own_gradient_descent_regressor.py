@@ -1,4 +1,5 @@
 import numpy as np
+import pandas as pd
 
 class OwnGradientDescentRegressor:
     def __init__(self, alpha=0.0001, max_iter=1000, n_iter_no_change=5, debug_output=False):
@@ -9,6 +10,10 @@ class OwnGradientDescentRegressor:
         self.debug_output = debug_output
 
     def fit(self, X, Y, coef_init=None, intercept_init=1.0):
+        if(isinstance(X, pd.DataFrame)):
+            X = X.to_numpy()
+        if(isinstance(Y, pd.DataFrame)):
+            Y = Y.to_numpy()
         self.initalizeWeights(X, coef_init, intercept_init)
         w_count = self.w_vector.shape[0]
         update_w = lambda of_w, w_value: w_value -  self.alpha * OwnGradientDescentRegressor.calculateDerivateResidualSumOfSquares(X, Y, self.w_vector, of_w)
