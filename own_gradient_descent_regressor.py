@@ -4,7 +4,7 @@ import pandas as pd
 class OwnGradientDescentRegressor:
     def __init__(self, alpha=0.0001, max_iter=1000, n_iter_no_change=5, debug_output=False):
         self.w_vector = None
-        self.alpha = alpha 
+        self.alpha = alpha
         self.max_iter = max_iter
         self.n_iter_no_change = n_iter_no_change
         self.debug_output = debug_output
@@ -21,7 +21,7 @@ class OwnGradientDescentRegressor:
         n_iter_no_change_count = 0
         for iter in range(self.max_iter):
             if (iter+1) % 100 == 0 and self.debug_output:
-                print(f'Running iteration {iter+1}/{self.max_iter}') 
+                print(f'Running iteration {iter+1}/{self.max_iter}')
 
             w_prev = self.w_vector
 
@@ -35,12 +35,12 @@ class OwnGradientDescentRegressor:
         if self.debug_output:
             print(f'Iteration did not converege with alpha={self.alpha}, max_iter={self.max_iter}, n_iter_no_change={self.n_iter_no_change}')
         return self.w_vector[1:], self.w_vector[0]
-    
+
     def predict(self, X):
         if(isinstance(X, pd.DataFrame)):
             X = X.to_numpy()
         return [OwnGradientDescentRegressor.calculateWeightedAttributeSum(x_vector, self.w_vector) for x_vector in X]
-    
+
     def initalizeWeights(self, X, coef_init, intercept_init):
         try:
             if coef_init == None:
